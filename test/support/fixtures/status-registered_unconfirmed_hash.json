@@ -1,0 +1,11 @@
+{
+  "digest"          : "15db6dbff590000ea13246e1c166802b690663c4e0635bfca78049d5a8762832",
+  "payment_address" : "1Zmxnd5CmLqhVnCbEcvxNxCoeqa2qhun3",
+  "pending"         : false,
+  "timestamp"       : "2015-09-28 18:16:50",
+  "tx"              : "f8db93646769eaf614cf5f26fb1bf1b78ee3f83ba6bebb5f7da9223f0022577d",
+  "txstamp"         : "2015-09-28 18:26:31",
+  "network"         : "livenet",
+  "success"         : true,
+  "blockstamp"      : ""
+}

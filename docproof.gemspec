@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Ikhsan Maulana"]
   spec.email         = ["ixandidu@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.summary       = %q{Unofficial Client library for Proof of Existence API}
+  spec.description   = %q{Unofficial Client library for Proof of Existence API}
+  spec.homepage      = "https://bitbucket.org/ixandidu/docproof"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -33,4 +33,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency "webmock", "~> 2.3.2"
+  spec.add_development_dependency "sinatra", "~> 1.4.8"
 end
