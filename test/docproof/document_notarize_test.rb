@@ -11,21 +11,21 @@ describe Docproof::Document do
       end
     end
 
-    it 'delegate to `PaymentProcessor#perform!`' do
-      mock_perform = Minitest::Mock.new
-      mock_perform.expect(:perform!, nil)
+    it 'call `PaymentProcessor#perform!`' do
+      perform_method_call = Minitest::Mock.new
+      perform_method_call.expect(:perform!, nil)
 
-      mock_new = Minitest::Mock.new
-      mock_new.expect(:call, mock_perform, [api_response])
+      payment_processor = Minitest::Mock.new
+      payment_processor.expect(:call, perform_method_call, [api_response])
 
       subject.stub :response, api_response do
-        Docproof::PaymentProcessor.stub(:new, mock_new) do
+        Docproof::PaymentProcessor.stub(:new, payment_processor) do
           subject.notarize!
         end
       end
 
-      mock_new.verify
-      mock_perform.verify
+      payment_processor.verify
+      perform_method_call.verify
     end
   end
 end
