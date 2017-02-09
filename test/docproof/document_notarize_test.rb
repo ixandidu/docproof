@@ -5,6 +5,12 @@ describe Docproof::Document do
     subject            { Docproof::Document.new(:the_sha256_hash) }
     let(:api_response) { {key: 'value'} }
 
+    it 'raise `AlreadyNotarized` if the api response include transaction id' do
+      subject.stub :response, {'tx' => 'A-TRANSCTION-ID'} do
+        ->{ subject.notarize! }.must_raise(Docproof::Document::AlreadyNotarized)
+      end
+    end
+
     it 'delegate to `PaymentProcessor#perform!`' do
       mock_perform = Minitest::Mock.new
       mock_perform.expect(:perform!, nil)

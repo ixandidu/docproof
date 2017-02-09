@@ -5,7 +5,7 @@ module Docproof
     class Existed < Error; end
     class Invalid < Error; end
     class NotFound < Error; end
-    class Notarized < Error; end
+    class AlreadyNotarized < Error; end
 
     require 'net/http'
     require 'json'
@@ -34,7 +34,7 @@ module Docproof
     end
 
     def notarize!
-      raise Notarized if options['tx'] # TODO: test!
+      raise AlreadyNotarized if response['tx']
       PaymentProcessor.new(response).perform!
     end
 
