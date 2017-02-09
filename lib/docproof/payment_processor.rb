@@ -39,7 +39,8 @@ module Docproof
         raise MissingDependency,
               'Coinbase is required, You can install it with: `gem install coinbase`'
       rescue KeyError
-        raise MissingCredentials
+        raise MissingCredentials,
+              'Please set `COINBASE_API_KEY` and `COINBASE_API_SECRET` environment variables'
       end
   end
 end
