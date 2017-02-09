@@ -1,5 +1,12 @@
 module Docproof
+  class Error < StandardError; end
+
   class Document
+    class Existed < Error; end
+    class Invalid < Error; end
+    class NotFound < Error; end
+    class Notarized < Error; end
+
     require 'net/http'
     require 'json'
 
@@ -15,26 +22,28 @@ module Docproof
 
     def register!
       post(REGISTER_ENDPOINT)
+      raise Existed if response['reason'] == 'existing'
+      raise Invalid if response['reason'] && response['reason'][/Invalid/]
+      response
     end
 
     def lookup!
       post(STATUS_ENDPOINT)
+      raise NotFound if response['reason'] == 'nonexistent'
+      response
+    end
+
+    def notarize!
+      raise Notarized if options['tx'] # TODO: test!
+      PaymentProcessor.new(response).perform!
     end
 
     private
 
       def post(uri)
-        JSON.parse(Net::HTTP.post_form(uri, d: sha256_hash).body).tap do |resp|
-          @response = resp.delete_if { |key, value| value == '' }
-
-          # Currently `resp['success']` can be either `true`, `false`, or
-          # `"true"` (string).
-          raise_error(resp['reason']) unless resp['success']
-        end
-      end
-
-      def raise_error(api_response)
-        raise RuntimeError, "The API response \"#{api_response}\""
+        @response = JSON.parse(
+          Net::HTTP.post_form(uri, d: sha256_hash).body
+        ).delete_if { |_, value| value == '' }
       end
   end
 end

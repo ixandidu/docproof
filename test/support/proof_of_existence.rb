@@ -2,6 +2,8 @@ module ProofOfExistence
   require 'sinatra/base'
 
   class FakeAPI < Sinatra::Base
+    include HelperMethods
+
     post '/api/v1/:end_point' do
       content_type :json
 
@@ -9,12 +11,7 @@ module ProofOfExistence
       # when we `register` an invalid sha256 hash.
       status params['d'][/invalid/] ? 400 : 200
 
-      File.open(
-        File.expand_path(
-          "fixtures/#{params['end_point']}-#{params['d']}.json",
-          __dir__
-        )
-      )
+      fixture_file "#{params['end_point']}-#{params['d']}.json"
     end
   end
 end

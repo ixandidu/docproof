@@ -8,39 +8,7 @@ describe Docproof::Document do
     )
   end
 
-  describe '#register!' do
-    describe 'registering a valid hash' do
-      subject { Docproof::Document.new(:valid_hash) }
-      it      { subject.register!.must_be_instance_of Hash }
-
-      describe '#response' do
-        let(:response) { subject.response.keys }
-
-        before { subject.register! }
-        it     { response.must_include 'digest' }
-        it     { response.must_include 'pay_address' }
-        it     { response.must_include 'price' }
-      end
-    end
-
-    describe 'registering an already registered hash' do
-      subject { Docproof::Document.new(:existing_hash) }
-
-      it 'raise an informative error on failure' do
-        lambda { subject.register! }.must_raise(RuntimeError, /existing/)
-      end
-    end
-
-    describe 'registering an invalid hash' do
-      subject { Docproof::Document.new(:invalid_hash) }
-
-      it 'raise an informative error on failure' do
-        lambda { subject.register! }.must_raise(RuntimeError, /Invalid/)
-      end
-    end
-  end
-
-  describe '.lookup!' do
+  describe '#lookup!' do
     describe 'looking up a pending hash' do
       subject { Docproof::Document.new(:pending_hash) }
       it      { subject.lookup!.must_be_instance_of Hash }
@@ -63,8 +31,8 @@ describe Docproof::Document do
         let(:response) { subject.response.keys }
 
         before { subject.lookup! }
-        it     { response.must_include 'tx'}
-        it     { response.must_include 'txstamp'}
+        it     { response.must_include 'tx' }
+        it     { response.must_include 'txstamp' }
         it     { response.wont_include 'blockstamp' }
       end
     end
@@ -77,18 +45,15 @@ describe Docproof::Document do
         let(:response) { subject.response.keys }
 
         before { subject.lookup! }
-        it     { response.must_include 'tx'}
-        it     { response.must_include 'txstamp'}
+        it     { response.must_include 'tx' }
+        it     { response.must_include 'txstamp' }
         it     { response.must_include 'blockstamp' }
       end
     end
 
     describe 'looking up a nonexistent hash' do
       subject { Docproof::Document.new(:nonexistent_hash) }
-
-      it 'raise an informative error on failure' do
-        lambda { subject.lookup! }.must_raise(RuntimeError, /nonexistent/)
-      end
+      it      { ->{ subject.lookup! }.must_raise(Docproof::Document::NotFound) }
     end
   end
 end

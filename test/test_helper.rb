@@ -6,3 +6,8 @@ require 'docproof'
 require 'minitest/spec'
 require 'minitest/autorun'
 require 'support/webmock'
+require 'support/helper_methods'
+
+class Minitest::Spec
+  include HelperMethods
+end
