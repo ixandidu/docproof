@@ -1,10 +1,9 @@
 require 'test_helper'
-require 'support/proof_of_existence'
 
 describe Docproof::Document do
   before do
     stub_request(:post, /proofofexistence.com/).to_rack(
-      ProofOfExistence::FakeAPI
+      Docproof::Mocks::ProofOfExistence::FakeAPI
     )
   end
 
