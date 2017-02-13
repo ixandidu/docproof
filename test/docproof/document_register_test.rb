@@ -9,7 +9,7 @@ describe Docproof::Document do
 
   describe '#register!' do
     describe 'registering a valid hash' do
-      subject { Docproof::Document.new(:valid_hash) }
+      subject { Docproof::Document.new(:valid) }
       it      { subject.register!.must_be_instance_of Hash }
 
       describe '#response' do
@@ -22,13 +22,13 @@ describe Docproof::Document do
       end
     end
 
-    describe 'registering an already registered hash' do
-      subject { Docproof::Document.new(:existing_hash) }
+    describe 'registering an existing hash' do
+      subject { Docproof::Document.new(:existing) }
       it      { ->{ subject.register! }.must_raise(Docproof::Document::Existed) }
     end
 
     describe 'registering an invalid hash' do
-      subject { Docproof::Document.new(:invalid_hash) }
+      subject { Docproof::Document.new(:invalid) }
        it     { ->{ subject.register! }.must_raise(Docproof::Document::Invalid) }
     end
   end

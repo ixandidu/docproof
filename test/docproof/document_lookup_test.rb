@@ -9,7 +9,7 @@ describe Docproof::Document do
 
   describe '#lookup!' do
     describe 'looking up a pending hash' do
-      subject { Docproof::Document.new(:pending_hash) }
+      subject { Docproof::Document.new(:pending) }
       it      { subject.lookup!.must_be_instance_of Hash }
 
       describe '#response' do
@@ -23,7 +23,7 @@ describe Docproof::Document do
     end
 
     describe 'looking up a registered but unconfirmed hash' do
-      subject { Docproof::Document.new(:registered_unconfirmed_hash) }
+      subject { Docproof::Document.new(:registered) }
       it      { subject.lookup!.must_be_instance_of Hash }
 
       describe '#response' do
@@ -37,7 +37,7 @@ describe Docproof::Document do
     end
 
     describe 'looking up a registered and confirmed hash' do
-      subject { Docproof::Document.new(:registered_confirmed_hash) }
+      subject { Docproof::Document.new(:confirmed) }
       it      { subject.lookup!.must_be_instance_of Hash }
 
       describe '#response' do
@@ -51,7 +51,7 @@ describe Docproof::Document do
     end
 
     describe 'looking up a nonexistent hash' do
-      subject { Docproof::Document.new(:nonexistent_hash) }
+      subject { Docproof::Document.new(:nonexistent) }
       it      { ->{ subject.lookup! }.must_raise(Docproof::Document::NotFound) }
     end
   end

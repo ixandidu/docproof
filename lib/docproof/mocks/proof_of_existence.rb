@@ -9,11 +9,19 @@ module Docproof
         post '/api/v1/:end_point' do
           content_type :json
 
+          @@simulations ||= []
+          if params['d'].start_with?('simulate') && @@simulations.empty?
+            @@simulations = params['d'].split('_').reverse
+            @@simulations.pop
+          end
+          params_digest = @@simulations.any? ? @@simulations.pop : params['d']
+          file_name     = "#{params['end_point']}/#{params_digest}"
+
           # The Proof of Existence API will only response with "400 Bad Request"
           # when we `register` an invalid sha256 hash.
-          status params['d'][/invalid/] ? 400 : 200
+          status params_digest[/invalid/] ? 400 : 200
 
-          fixture_file "#{params['end_point']}-#{params['d']}.json"
+          json_file file_name
         end
       end
     end
