@@ -10,7 +10,7 @@ module Docproof
           content_type :json
 
           @@simulations ||= []
-          if params['d'].start_with?('simulate') && @@simulations.empty?
+          if params['d'].start_with?('sequence') && @@simulations.empty?
             @@simulations = params['d'].split('_').reverse
             @@simulations.pop
           end
