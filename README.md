@@ -1,4 +1,4 @@
-# Docproof [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/ixandidu/docproof/master/LICENSE.md) [![Gem](https://img.shields.io/gem/v/docproof.svg?style=flat-square)](https://rubygems.org/gems/docproof)
+# Docproof [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/ixandidu/docproof/master/LICENSE.md) [![Gem](https://img.shields.io/gem/v/docproof.svg?style=flat-square)](https://rubygems.org/gems/docproof) [![Code Climate](https://codeclimate.com/github/ixandidu/docproof/badges/gpa.svg)](https://codeclimate.com/github/ixandidu/docproof)
 
 Client library for [Proof of Existence API](https://proofofexistence.com/developers).
 
