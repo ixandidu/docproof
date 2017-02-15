@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'support/coinbase'
 
 describe Docproof::PaymentProcessor do
   describe '#bitcoin_address' do
@@ -17,7 +16,7 @@ describe Docproof::PaymentProcessor do
 
   describe '#price_in_btc' do
     specify do
-      options           = {'price' => 5000_000}
+      options           = {'price' => 5_000_000}
       payment_processor = Docproof::PaymentProcessor.new(options)
 
       payment_processor.price_in_btc.must_equal(
@@ -35,51 +34,32 @@ describe Docproof::PaymentProcessor do
   end
 
   describe '#perform!' do
+    let(:bitcoin_address) { 'bitcoinADDRESS' }
+    let(:price_in_btc)    { 500_000 }
+
     subject { Docproof::PaymentProcessor.new }
 
-    it 'raise `MissingDependency` if coinbase is not installed' do
-      ->{ subject.perform! }.must_raise(
-        Docproof::PaymentProcessor::MissingDependency
-      )
-    end
+    it 'call `Coinbase#perform!`' do
+      perform_method_call = Minitest::Mock.new
+      perform_method_call.expect(:perform!, nil)
 
-    it 'raise `MissingCredentials` if coinbase credentials is not configure' do
-      subject.stub :require, true do
-        ->{ subject.perform! }.must_raise(
-          Docproof::PaymentProcessor::MissingCredentials
-        )
-      end
-    end
-
-    it 'call `Coinbase::Wallet::Client#primary_account` to `send` bitcoin' do
-      send_method_call = Minitest::Mock.new
-      send_method_call.expect(
-        :send,
-        nil,
-        [{to: nil, amount: Docproof::PaymentProcessor::MINIMUM_PRICE_IN_BTC, currency: 'BTC'}]
-      )
-
-      primary_account_method_call = Minitest::Mock.new
-      primary_account_method_call.expect(:primary_account, send_method_call)
-
-      coinbase_wallet_client = Minitest::Mock.new
-      coinbase_wallet_client.expect(
+      coinbase = Minitest::Mock.new
+      coinbase.expect(
         :call,
-        primary_account_method_call,
-        [{api_key: '<CREDENTIALS>', api_secret: '<CREDENTIALS>'}]
+        perform_method_call,
+        [recipient: bitcoin_address, amount: price_in_btc]
       )
 
-      subject.stub :require, true do
-        ENV.stub :fetch, '<CREDENTIALS>' do
-          Coinbase::Wallet::Client.stub(:new, coinbase_wallet_client) do
+      subject.stub :bitcoin_address, bitcoin_address do
+        subject.stub :price_in_btc, price_in_btc do
+          Docproof::PaymentProcessor::Coinbase.stub(:new, coinbase) do
             subject.perform!
           end
         end
       end
 
-      coinbase_wallet_client.verify
-      primary_account_method_call.verify
-      send_method_call.verify
+      coinbase.verify
+      perform_method_call.verify
     end
   end
 end

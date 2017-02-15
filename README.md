@@ -30,7 +30,22 @@ and requires `coinbase/wallet`
 ```ruby
 require 'coinbase/wallet`
 
-docproof_document = Docproof::Document.new('y0urd0cum3nt5ha256h45h') 
+docproof_document = Docproof::Document.new('y0urd0cum3nt5ha256h45h')
+docproof_document.register! && docproof_document.notarize!
+```
+
+You can also configure the Coinbase API Key and Secret like so:
+
+```ruby
+require 'coinbase/wallet`
+
+Docproof::PaymentProcessor::Coinbase.configure do |config|
+  config.api_key    = 'YOUR-COINBASE-API-KEY'
+  config.api_secret = 'YOUR-COINBASE-API-SECRET'
+end
+
+docproof_document = Docproof::Document.new('y0urd0cum3nt5ha256h45h')
+docproof_document.register! && docproof_document.notarize!
 ```
 
 ## Usage
@@ -59,4 +74,4 @@ The JSON response is stored in `Docproof::Document#response` and keys with the v
 
 ### Errors
 
-If the request is not successful, the gem will raise an error. All errors are subclasses of `Docproof::Document::Errors`.
+If the request is not successful, the gem will raise an error. All errors are subclasses of `Docproof::Error`.

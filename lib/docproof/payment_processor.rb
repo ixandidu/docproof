@@ -1,5 +1,7 @@
 module Docproof
   class PaymentProcessor
+    require 'docproof/payment_processor/coinbase'
+
     class MissingDependency < Error; end
     class MissingCredentials < Error; end
 
@@ -19,28 +21,10 @@ module Docproof
     end
 
     def perform!
-      coinbase_wallet_primary_account.send(
-        to:       bitcoin_address,
-        amount:   price_in_btc,
-        currency: 'BTC'
-      )
+      Coinbase.new(
+        recipient: bitcoin_address,
+        amount:    price_in_btc
+      ).perform!
     end
-
-    private
-
-      def coinbase_wallet_primary_account
-        require 'coinbase/wallet'
-
-        Coinbase::Wallet::Client.new(
-          api_key:    ENV.fetch('COINBASE_API_KEY'),
-          api_secret: ENV.fetch('COINBASE_API_SECRET')
-        ).primary_account
-      rescue LoadError
-        raise MissingDependency,
-              'Coinbase is required, You can install it with: `gem install coinbase`'
-      rescue KeyError
-        raise MissingCredentials,
-              'Please set `COINBASE_API_KEY` and `COINBASE_API_SECRET` environment variables'
-      end
   end
 end
