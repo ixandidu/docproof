@@ -5,6 +5,10 @@ describe Docproof::Document do
     subject            { Docproof::Document.new(:the_sha256_hash) }
     let(:api_response) { {key: 'value'} }
 
+    it 'raise `NotRegistered` if the api response is missing' do
+      ->{ subject.notarize! }.must_raise(Docproof::Document::NotRegistered)
+    end
+
     it 'raise `AlreadyNotarized` if the api response include transaction id' do
       subject.stub :response, {'tx' => 'A-TRANSCTION-ID'} do
         ->{ subject.notarize! }.must_raise(Docproof::Document::AlreadyNotarized)

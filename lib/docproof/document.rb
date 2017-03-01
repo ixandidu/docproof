@@ -6,6 +6,7 @@ module Docproof
     class Invalid < Error; end
     class NotFound < Error; end
     class AlreadyNotarized < Error; end
+    class NotRegistered < Error; end
 
     require 'net/http'
     require 'json'
@@ -45,6 +46,13 @@ module Docproof
     end
 
     def notarize!
+      unless response
+        raise(
+          NotRegistered,
+          'please register or lookup the document before notarize'
+        )
+      end
+
       if response['tx']
         raise AlreadyNotarized, "\"#{sha256_hash}\" is already notarized."
       end
