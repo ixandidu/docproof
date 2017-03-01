@@ -1,5 +1,11 @@
 sudo: false
 language: ruby
 rvm:
+  - 2.0.0
+  - 2.1.9
+  - 2.2.6
   - 2.3.3
-before_install: gem install bundler -v 1.14.3
+  - 2.4.0
+before_install: gem install bundler
+script: bundle exec rake
+after_script: bundle exec codeclimate-test-reporter
