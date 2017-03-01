@@ -29,13 +29,13 @@ module Docproof
         yield configuration if block_given?
       end
 
-      def initialize(recipient:, amount:)
+      def initialize(options={})
         if !Coinbase.configuration.api_key || !Coinbase.configuration.api_secret
           raise MissingCredentials, 'Coinbase API key and secret in not set'
         end
 
-        @recipient = recipient
-        @amount    = amount
+        @recipient = options[:recipient]
+        @amount    = options[:amount]
       end
 
       def perform!
