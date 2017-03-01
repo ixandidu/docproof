@@ -1,4 +1,4 @@
-# Docproof [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/ixandidu/docproof/master/LICENSE.md) [![Gem](https://img.shields.io/gem/v/docproof.svg?style=flat-square)](https://rubygems.org/gems/docproof) [![Code Climate](https://codeclimate.com/github/ixandidu/docproof/badges/gpa.svg)](https://codeclimate.com/github/ixandidu/docproof)
+# Docproof [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/ixandidu/docproof/master/LICENSE.md) [![Gem](https://img.shields.io/gem/v/docproof.svg?style=flat-square)](https://rubygems.org/gems/docproof) [![Code Climate](https://codeclimate.com/github/ixandidu/docproof/badges/gpa.svg)](https://codeclimate.com/github/ixandidu/docproof) [![Test Coverage](https://codeclimate.com/github/ixandidu/docproof/badges/coverage.svg)](https://codeclimate.com/github/ixandidu/docproof/coverage) [![Issue Count](https://codeclimate.com/github/ixandidu/docproof/badges/issue_count.svg)](https://codeclimate.com/github/ixandidu/docproof)
 
 Client library for [Proof of Existence API](https://proofofexistence.com/developers).
 
@@ -20,12 +20,14 @@ Or install it yourself as:
 
 ## Configuration
 
-Currently the only supported Bitcoin Payment Gateway is [Coinbase](https://github.com/coinbase/coinbase-ruby), so if you want to use the `Docproof::Document#notarize!` you'll need to set the following environment variables:
+If you want to use `Docproof::Document#notarize!` you'll need to set the following environment variables (Note that we are currently only support [Coinbase](https://github.com/coinbase/coinbase-ruby)):
+
 
     COINBASE_API_KEY=YOUR-COINBASE-API-KEY
     COINBASE_API_SECRET=YOUR-COINBASE-API-SECRET
+    COINBASE_ACCOUNT_ID=YOUR-COINBASE-ACCOUNT-ID # this is optional, we'll use your primary_account if you don't specify this
 
-and requires `coinbase/wallet`
+and require the `coinbase/wallet`, e.g.:
 
 ```ruby
 require 'coinbase/wallet`
@@ -34,15 +36,25 @@ docproof_document = Docproof::Document.new('y0urd0cum3nt5ha256h45h')
 docproof_document.register! && docproof_document.notarize!
 ```
 
-You can also configure the Coinbase API Key and Secret like so:
+You can also configure the Coinbase API Key, Secret and Account ID like so:
 
 ```ruby
 require 'coinbase/wallet`
 
-Docproof::PaymentProcessor::Coinbase.configure do |config|
-  config.api_key    = 'YOUR-COINBASE-API-KEY'
-  config.api_secret = 'YOUR-COINBASE-API-SECRET'
-end
+#
+# Docproof::PaymentProcessor::Coinbase.configure do |config|
+#   config.api_key    = 'YOUR-COINBASE-API-KEY'
+#   config.api_secret = 'YOUR-COINBASE-API-SECRET'
+#   config.api_secret = 'YOUR-COINBASE-ACCOUNT-ID'
+# end
+#
+# or pass a hash as configuration (the hash key must be string)
+
+Docproof::PaymentProcessor::Coinbase.configure(
+  'api_key'    => 'YOUR-COINBASE-API-KEY'
+  'api_secret' => 'YOUR-COINBASE-API-SECRET'
+  'api_secret' => 'YOUR-COINBASE-ACCOUNT-ID'
+)
 
 docproof_document = Docproof::Document.new('y0urd0cum3nt5ha256h45h')
 docproof_document.register! && docproof_document.notarize!
@@ -53,19 +65,19 @@ docproof_document.register! && docproof_document.notarize!
 To register a new document's SHA256 digest:
 
 ```ruby
-doc.register!
+docproof_document.register!
 ```
 
-To post the document's SHA256 digest to the blockchain (making payment to indicated bitcoind address):
+To post the registered document SHA256 digest to the blockchain (make payment to the indicated bitcoin address using the Coinbase you've specify):
 
 ```ruby
-doc.notarize!
+docproof_document.notarize!
 ```
 
-To lookup the status of the document's SHA256 digest:
+To lookup the status of the registered document's SHA256 digest:
 
 ```ruby
-doc.lookup!
+docproof_document.lookup!
 ```
 
 ## Response
