@@ -6,12 +6,10 @@ describe Docproof::PaymentProcessor::Coinbase do
   let(:amount)    { 5_000_000 }
 
   subject do
-    lambda do
-      Docproof::PaymentProcessor::Coinbase.new(
-        recipient: recipient,
-        amount:    amount
-      )
-    end
+    Docproof::PaymentProcessor::Coinbase.new(
+      recipient: recipient,
+      amount:    amount
+    )
   end
 
   before { Docproof::PaymentProcessor::Coinbase.configuration = nil }
@@ -29,7 +27,7 @@ describe Docproof::PaymentProcessor::Coinbase do
     describe 'when it is not configure using `configure` method' do
       describe 'when COINBASE_API_KEY and COINBASE_API_SECRET environment variables undefined' do
         it 'raise `MissingCredentials`' do
-          -> { subject.call }.must_raise(
+          -> { subject }.must_raise(
             Docproof::PaymentProcessor::MissingCredentials
           )
         end
@@ -38,7 +36,7 @@ describe Docproof::PaymentProcessor::Coinbase do
       describe 'when COINBASE_API_KEY and COINBASE_API_SECRET environment variables defined' do
         it 'take the API key and secret from environment variable' do
           ENV.stub :[], ->(key){ env[key] } do
-            subject.call.must_be_instance_of(Docproof::PaymentProcessor::Coinbase)
+            subject.must_be_instance_of(Docproof::PaymentProcessor::Coinbase)
           end
 
           configuration.api_key.must_equal    env['COINBASE_API_KEY']
@@ -63,7 +61,7 @@ describe Docproof::PaymentProcessor::Coinbase do
 
       it 'use the configuration instead of the environment variable' do
         ENV.stub :[], ->(key){ env[key] } do
-          subject.call.must_be_instance_of(Docproof::PaymentProcessor::Coinbase)
+          subject.must_be_instance_of(Docproof::PaymentProcessor::Coinbase)
         end
 
         configuration.api_key.must_equal    api_key
@@ -87,7 +85,7 @@ describe Docproof::PaymentProcessor::Coinbase do
 
       it 'use the configuration hash instead of the environment variable' do
         ENV.stub :[], ->(key){ env[key] } do
-          subject.call.must_be_instance_of(Docproof::PaymentProcessor::Coinbase)
+          subject.must_be_instance_of(Docproof::PaymentProcessor::Coinbase)
         end
 
         configuration.api_key.must_equal    configuration_hash['api_key']
@@ -98,11 +96,9 @@ describe Docproof::PaymentProcessor::Coinbase do
   end
 
   describe '#perform!' do
-    let(:coinbase_instance) { subject.call }
-
     it 'raise `MissingDependency` if coinbase is not installed' do
       ENV.stub :[], '<CREDENTIALS>' do
-        ->{ coinbase_instance.perform! }.must_raise(
+        ->{ subject.perform! }.must_raise(
           Docproof::PaymentProcessor::MissingDependency
         )
       end
@@ -128,9 +124,9 @@ describe Docproof::PaymentProcessor::Coinbase do
         )
 
         ENV.stub :[], ->(key){ key != 'COINBASE_ACCOUNT_ID' ? '<CREDENTIALS>' : nil } do
-          coinbase_instance.stub :require, true do
+          subject.stub :require, true do
             ::Coinbase::Wallet::Client.stub(:new, coinbase_wallet_client) do
-              coinbase_instance.perform!
+              subject.perform!
             end
           end
         end
@@ -161,9 +157,9 @@ describe Docproof::PaymentProcessor::Coinbase do
         )
 
         ENV.stub :[], ->(key){ '<CREDENTIALS>' } do
-          coinbase_instance.stub :require, true do
+          subject.stub :require, true do
             ::Coinbase::Wallet::Client.stub(:new, coinbase_wallet_client) do
-              coinbase_instance.perform!
+              subject.perform!
             end
           end
         end
