@@ -3,11 +3,13 @@ module Docproof
     class Coinbase
       class Configuration
         attr_accessor :api_key,
-                      :api_secret
+                      :api_secret,
+                      :account_id
 
-        def initialize
-          @api_key    = ENV['COINBASE_API_KEY']
-          @api_secret = ENV['COINBASE_API_SECRET']
+        def initialize(config={})
+          @api_key    = config.fetch('api_key')    { ENV['COINBASE_API_KEY'] }
+          @api_secret = config.fetch('api_secret') { ENV['COINBASE_API_SECRET'] }
+          @account_id = config.fetch('account_id') { ENV['COINBASE_ACCOUNT_ID'] }
         end
       end
 
@@ -22,9 +24,9 @@ module Docproof
         @configuration = config
       end
 
-
-      def self.configure
-        yield configuration
+      def self.configure(config={})
+        self.configuration = Configuration.new(config)
+        yield configuration if block_given?
       end
 
       def initialize(recipient:, amount:)
@@ -37,7 +39,7 @@ module Docproof
       end
 
       def perform!
-        coinbase_wallet_primary_account.send(
+        coinbase_account.send(
           to:       recipient,
           amount:   amount,
           currency: 'BTC'
@@ -46,16 +48,24 @@ module Docproof
 
       private
 
-        def coinbase_wallet_primary_account
+        def coinbase_client
           require 'coinbase/wallet'
 
-          @coinbase_wallet_primary_account ||= ::Coinbase::Wallet::Client.new(
+          @coinbase_client ||= ::Coinbase::Wallet::Client.new(
             api_key:    Coinbase.configuration.api_key,
             api_secret: Coinbase.configuration.api_secret
-          ).primary_account
+          )
         rescue LoadError
           raise MissingDependency,
             'Coinbase is required, You can install it with: `gem install coinbase`'
+        end
+
+        def coinbase_account
+          if account_id = Coinbase.configuration.account_id
+            @coinbase_account = coinbase_client.account(account_id)
+          else
+            @coinbase_account = coinbase_client.primary_account
+          end
         end
     end
   end
